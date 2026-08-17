@@ -16,14 +16,14 @@ public:
 
 class teViewport
 {
+public:
     GLFWwindow* window;
 
-public:
     int width = 1280;
     int height = 800;
 
     teCamera cam;
 
     teViewport();
-    int tick();
+    void tick();
 };

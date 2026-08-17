@@ -1,4 +1,5 @@
 #include "teViewport.h"
+#include <iostream>
 
 static void frameBufferSize_CB(GLFWwindow* w, int width, int height);
 static void mouseButton_CB(GLFWwindow* w, int button, int action, int mods);
@@ -7,10 +8,6 @@ static void scroll_CB(GLFWwindow* w, double offsetX, double offsetY);
 
 teViewport::teViewport()
 {
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
     this->window = glfwCreateWindow(width, height, "Trident Editor X", nullptr, nullptr);
     if (!window)
     {
@@ -25,33 +22,30 @@ teViewport::teViewport()
     glfwSetCursorPosCallback(window, cursorPos_CB);
     glfwSetScrollCallback(window, scroll_CB);
 
-    /*
-    GLuint program = createProgram(vertexShaderSrc, fragmentShaderSrc);
+    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
-    GLint resLoc  = glGetUniformLocation(program, "u_resolution");
-    GLint camLoc  = glGetUniformLocation(program, "u_camPos");
-    GLint zoomLoc = glGetUniformLocation(program, "u_zoom");
-    */
+
+    //GLuint program = createProgram(vertexShaderSrc, fragmentShaderSrc);
+    //GLint resLoc  = glGetUniformLocation(program, "u_resolution");
+    //GLint camLoc  = glGetUniformLocation(program, "u_camPos");
+    //GLint zoomLoc = glGetUniformLocation(program, "u_zoom");
+
+    std::cout << std::endl;
 }
 
-int teViewport::tick()
+void teViewport::tick()
 {
-    if (glfwWindowShouldClose(window))
-    {
-        glfwTerminate();
-        return 1;
-    }
-
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
         glfwSetWindowShouldClose(window, true);
     }
 
-    glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.0f, 0.25f, 0.25f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glfwSwapBuffers(window);
     glfwPollEvents();
-    return 0;
+
+    //std::cout << "\r\033[K" << "x:" << cam.x << "  y:" << cam.y;
 }
 
 static void frameBufferSize_CB(GLFWwindow* w, int width, int height)
@@ -117,5 +111,8 @@ static void scroll_CB(GLFWwindow* w, double offsetX, double offsetY)
         return;
     }
 
-    // todo
+    double mouseX = 0;
+    double mouseY = 0;
+
+    glfwGetCursorPos(w, &mouseX, &mouseY);
 }
