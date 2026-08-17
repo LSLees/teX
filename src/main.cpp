@@ -1,8 +1,13 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
+#include "teViewport.h"
+
 
 int main()
 {
+    teViewport vp;
+    
+    while (vp.tick())
+    {
+    }
+
     return 0;
 }
