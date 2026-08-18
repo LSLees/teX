@@ -19,11 +19,19 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
     src/teViewport.cpp
     external/glad/src/glad.c
+    imgui/imgui.cpp
+    imgui/imgui_draw.cpp
+    imgui/imgui_tables.cpp
+    imgui/imgui_widgets.cpp
+    imgui/backends/imgui_impl_glfw.cpp
+    imgui/backends/imgui_impl_opengl3.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
     external/glad/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/imgui
+    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw)

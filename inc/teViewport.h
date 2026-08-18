@@ -18,12 +18,9 @@ class teViewport
 {
 public:
     GLFWwindow* window;
-
-    int width = 1280;
-    int height = 800;
-
     teCamera cam;
 
     teViewport();
+    ~teViewport();
     void tick();
 };

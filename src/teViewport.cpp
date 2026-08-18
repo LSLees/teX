@@ -1,4 +1,7 @@
 #include "teViewport.h"
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
 #include <iostream>
 
 static void frameBufferSize_CB(GLFWwindow* w, int width, int height);
@@ -8,7 +11,7 @@ static void scroll_CB(GLFWwindow* w, double offsetX, double offsetY);
 
 teViewport::teViewport()
 {
-    this->window = glfwCreateWindow(width, height, "Trident Editor X", nullptr, nullptr);
+    this->window = glfwCreateWindow(2250, 1350, "Trident Editor X", nullptr, nullptr);
     if (!window)
     {
         glfwTerminate();    
@@ -16,21 +19,30 @@ teViewport::teViewport()
 
     glfwMakeContextCurrent(window);
     glfwSetWindowUserPointer(window, this);
-
+    glfwSwapInterval(1);
     glfwSetFramebufferSizeCallback(window, frameBufferSize_CB);
     glfwSetMouseButtonCallback(window, mouseButton_CB);
     glfwSetCursorPosCallback(window, cursorPos_CB);
     glfwSetScrollCallback(window, scroll_CB);
+    gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 
-    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+    ImGui::GetIO().FontGlobalScale = 2.0f;
+}
 
-
-    //GLuint program = createProgram(vertexShaderSrc, fragmentShaderSrc);
-    //GLint resLoc  = glGetUniformLocation(program, "u_resolution");
-    //GLint camLoc  = glGetUniformLocation(program, "u_camPos");
-    //GLint zoomLoc = glGetUniformLocation(program, "u_zoom");
-
-    std::cout << std::endl;
+teViewport::~teViewport()
+{
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+    glfwTerminate();
 }
 
 void teViewport::tick()
@@ -40,12 +52,25 @@ void teViewport::tick()
         glfwSetWindowShouldClose(window, true);
     }
 
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+
+    ImGui::NewFrame(); 
+    ImGui::Begin("Debug");
+    ImGui::Text("x:%d", cam.x);
+    ImGui::Text("y:%d", cam.y);
+    ImGui::End();
+    ImGui::Render();
+
+    //std::cout << cam.x << cam.y << std::endl;
+
+    glfwPollEvents();
     glClearColor(0.0f, 0.25f, 0.25f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    glfwSwapBuffers(window);
-    glfwPollEvents();
 
-    //std::cout << "\r\033[K" << "x:" << cam.x << "  y:" << cam.y;
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    glfwSwapBuffers(window);
 }
 
 static void frameBufferSize_CB(GLFWwindow* w, int width, int height)
@@ -56,8 +81,6 @@ static void frameBufferSize_CB(GLFWwindow* w, int width, int height)
         return;
     }
 
-    teVp->width = width;
-    teVp->height = height;
     glViewport(0, 0, width, height);
 }
 
