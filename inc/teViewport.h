@@ -16,6 +16,11 @@ public:
 
 class teViewport
 {
+    GLuint grid = 0;
+    GLuint shader = 0;
+
+    void renderGrid();
+
 public:
     GLFWwindow* window;
     teCamera cam;
